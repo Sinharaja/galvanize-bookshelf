@@ -32,22 +32,26 @@ router.post("/books", (req, res) => {
     })
 })
 
+router.patch('/books/:id', (req, res) => {
+  knex('books')
+    .where('id', req.params.id)
+    .update(humps.decamelizeKeys(req.body), ["id", "title", "author", "genre", "description", "cover_url"])
+    .then(result => {
+      res.status(200).json(humps.camelizeKeys(result[0]));
+    })
+})
 
 router.delete("/books/:id", (req, res) => {
-
   knex("books")
   .select("title", "author", "genre", "description", "cover_url")
     .where("id", req.params.id)
     .then(result => {
       if (result != '') {
-        console.log('here');
         let output = result;
-        // return output;
         knex("books")
         .where("id", req.params.id)
         .del()
         .then(result => {
-          // console.log(humps.camelizeKeys(output[0]));
           res.status(200).json(humps.camelizeKeys(output[0]));
         })
       }

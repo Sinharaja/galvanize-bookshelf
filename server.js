@@ -33,13 +33,13 @@ const path = require('path');
 app.use(express.static(path.join('public')));
 
 // CSRF protection
-app.use((req, res, next) => {
-  if (/json/.test(req.get('Accept'))) {
-    return next();
-  }
-
-  res.sendStatus(406);
-});
+// app.use((req, res, next) => {
+//   if (/json/.test(req.get('Accept'))) {
+//     return next();
+//   }
+//
+//   res.sendStatus(406);
+// });
 
 const books = require('./routes/books');
 const favorites = require('./routes/favorites');
@@ -69,7 +69,8 @@ app.use((err, _req, res, _next) => {
   res.sendStatus(500);
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
+if (app.get('env') === 'test') port = 8000;
 
 app.listen(port, () => {
   if (app.get('env') !== 'test') {
