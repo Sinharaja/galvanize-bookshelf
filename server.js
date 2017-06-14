@@ -69,7 +69,7 @@ app.use((err, _req, res, _next) => {
   res.sendStatus(500);
 });
 
-const port = process.env.PORT || 8080;
+let port = process.env.PORT || 8080;
 if (app.get('env') === 'test') port = 8000;
 
 app.listen(port, () => {
