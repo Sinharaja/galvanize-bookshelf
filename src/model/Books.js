@@ -1,5 +1,4 @@
 const knex = require('../../knex');
-const humps = require('humps');
 
 class Books {
 
@@ -26,7 +25,7 @@ class Books {
   }
 
   deleteBook(id) {
-    let deletedBook;
+    let deletedBook = [];
     return knex("books")
       .select("title", "author", "genre", "description", "cover_url")
       .where("id", id)
