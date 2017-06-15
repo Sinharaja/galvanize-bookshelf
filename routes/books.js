@@ -70,20 +70,19 @@ router.patch('/books/:id', (req, res) => {
   }
 
   let book = new Books();
-
   book.getById(req.params.id)   //Make sure id exists in database first!
     .then(result => {
-      if (result.length > 0) {
-        book.update(req.params.id, humps.decamelizeKeys(req.body))
-        .then(result => {
-          res.status(200).json(humps.camelizeKeys(result[0]));
-        })
-        .catch(err => {
-          console.error(err);
-          res.sendStatus(500);
-        });
+      if (result.length === 0) {
+        return res.sendStatus(404);
       }
-      return res.sendStatus(404);
+      book.update(req.params.id, humps.decamelizeKeys(req.body))
+      .then(result => {
+        res.status(200).json(humps.camelizeKeys(result[0]));
+      })
+      .catch(err => {
+        console.error(err);
+        res.sendStatus(500);
+      });
     })
 });
 
@@ -91,6 +90,7 @@ router.delete("/books/:id", (req, res) => {
   if (isNaN(req.params.id) || req.params.id * 1 <= 0) {
     return res.sendStatus(404);
   }
+  
   let book = new Books();
   book.deleteBook(req.params.id)
     .then(result => {
