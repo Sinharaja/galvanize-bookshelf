@@ -28,10 +28,11 @@ class Favorites {
       .then(favorite => {
         if (favorite !== '') {
           deletedFavorite = favorite;
-          knex('favorite')
+          knex('favorites')
             .where('user_id', data.user_id)
             .where('book_id', data.book_id)
             .del()
+            .then()
         }
       })
       .then(() => {
