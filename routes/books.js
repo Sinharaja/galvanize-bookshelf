@@ -2,33 +2,38 @@
 
 const express = require('express');
 const knex = require('../knex');
-const humps = require('humps');
 const Books = require('../src/model/Books');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
+let book = new Books();
+
 // YOUR CODE HERE
 router.get("/books", (req, res) => {
-  let book = new Books();
   book.getAll()
     .then(result => {
-      res.status(200).json(humps.camelizeKeys(result));
+      res.send(result);
+    })
+    .catch(err => {
+      console.error(err);
+      res.sendStatus(500);
     });
 });
 
 router.get("/books/:id", (req, res) => {
-  if (isNaN(req.params.id) || req.params.id * 1 <= 0) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id) || id <= 0) {
     return res.sendStatus(404);
   }
 
-  let book = new Books();
-  book.getById(req.params.id)
-    .then(result => {
-      if (result.length < 1) {
+  book.getById(id)
+    .then(book => {
+      if (!book) {
         return res.sendStatus(404);
       }
-      res.status(200).json(humps.camelizeKeys(result[0]));
+      res.send(book);
     })
     .catch(err => {
       console.error(err);
@@ -37,67 +42,76 @@ router.get("/books/:id", (req, res) => {
 });
 
 router.post("/books", (req, res) => {
-  if (!req.body.title) {
+  const dataToAdd = req.body;
+
+  if (!dataToAdd.title) {
     return res.status(400).set('Content-Type', 'text/plain').send("Title must not be blank");
   }
 
-  if (!req.body.author) {
+  if (!dataToAdd.author) {
     return res.status(400).set('Content-Type', 'text/plain').send("Author must not be blank");
   }
 
-  if (!req.body.genre) {
+  if (!dataToAdd.genre) {
     return res.status(400).set('Content-Type', 'text/plain').send("Genre must not be blank");
   }
 
-  if (!req.body.description) {
+  if (!dataToAdd.description) {
     return res.status(400).set('Content-Type', 'text/plain').send("Description must not be blank");
   }
 
-  if (!req.body.coverUrl) {
+  if (!dataToAdd.coverUrl) {
     return res.status(400).set('Content-Type', 'text/plain').send("Cover URL must not be blank");
   }
 
-  let book = new Books();
-  book.create(humps.decamelizeKeys(req.body))
+  book.create(dataToAdd)
     .then(result => {
-      res.status(200).json(humps.camelizeKeys(result[0]));
+      res.send(result);
+    })
+    .catch(err => {
+      console.error(err);
+      res.sendStatus(500);
     });
 });
 
 router.patch('/books/:id', (req, res) => {
-  if (isNaN(req.params.id) || req.params.id * 1 <= 0) {
+  const id = parseInt(req.params.id);
+  const dataToUpdate = req.body;
+
+  if (isNaN(id) || id <= 0) {
     return res.sendStatus(404);
   }
 
-  let book = new Books();
-  book.getById(req.params.id)   //Make sure id exists in database first!
+  book.update(id, dataToUpdate)
     .then(result => {
-      if (result.length === 0) {
+      if (!result){
         return res.sendStatus(404);
       }
-      book.update(req.params.id, humps.decamelizeKeys(req.body))
-      .then(result => {
-        res.status(200).json(humps.camelizeKeys(result[0]));
-      })
-      .catch(err => {
-        console.error(err);
-        res.sendStatus(500);
-      });
+      res.send(result);
     })
+    .catch(err => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 });
 
 router.delete("/books/:id", (req, res) => {
-  if (isNaN(req.params.id) || req.params.id * 1 <= 0) {
+  const id = parseInt(req.params.id);
+
+  if (isNaN(id) || id <= 0) {
     return res.sendStatus(404);
   }
-  
-  let book = new Books();
-  book.deleteBook(req.params.id)
+
+  book.deleteBook(id)
     .then(result => {
-      if (result.length < 1) {
+      if (!result) {
         return res.sendStatus(404);
       }
-      res.status(200).json(humps.camelizeKeys(result[0]));
+      res.send(result);
+    })
+    .catch(err => {
+      console.error(err);
+      res.sendStatus(500);
     });
 });
 
