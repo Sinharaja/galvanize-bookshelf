@@ -4,7 +4,8 @@ const knex = require('../../knex');
 class Favorites {
   getUserFavorites(id) {
     return knex('favorites')
-      .innerJoin('books', 'books.id', 'favorites.book_id');
+      .innerJoin('books', 'books.id', 'favorites.book_id')
+      .where('user_id', id);
   }
 
   isFavorite(userId, bookId) {
