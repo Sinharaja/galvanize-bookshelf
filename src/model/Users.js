@@ -5,7 +5,7 @@ class Users {
 
   getbyEmail(email) {
     return knex("users")
-      .where("email", email)
+      .where("email", email.toLowerCase())
   }
 
   create(data) {
@@ -15,7 +15,7 @@ class Users {
           .insert({
             first_name: data.firstName,
             last_name: data.lastName,
-            email: data.email,
+            email: data.email.toLowerCase(),
             hashed_password: hashedPassword
           }, ['id', 'first_name', 'last_name', 'email']);
       })

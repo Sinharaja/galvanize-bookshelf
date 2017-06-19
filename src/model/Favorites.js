@@ -1,6 +1,5 @@
 const knex = require('../../knex');
 
-
 class Favorites {
   getUserFavorites(id) {
     return knex('favorites')
@@ -33,14 +32,13 @@ class Favorites {
             .where('user_id', data.user_id)
             .where('book_id', data.book_id)
             .del()
-            .then()
+            .then();
         }
       })
       .then(() => {
         return deletedFavorite;
-      })
+      });
   }
 }
-
 
 module.exports = Favorites;

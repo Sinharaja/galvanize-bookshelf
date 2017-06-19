@@ -35,6 +35,7 @@ class Books {
           knex("books")
           .where("id", id)
           .del()
+          .then();
         }
       })
       .then(() => {
